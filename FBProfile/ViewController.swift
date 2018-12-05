@@ -7,14 +7,36 @@
 //
 
 import UIKit
+import FBSDKLoginKit
 
-class ViewController: UIViewController {
-
+class ViewController: UIViewController, FBSDKLoginButtonDelegate {
+    @IBOutlet weak var loginButton: FBSDKLoginButton!
     override func viewDidLoad() {
         super.viewDidLoad()
         // Do any additional setup after loading the view, typically from a nib.
+        loginButton.readPermissions = ["public_profile"]
+        loginButton.delegate = self
+        
+        
     }
-
-
+    
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+        
+        if let _ = FBSDKAccessToken.current()?.tokenString {
+            performSegue(withIdentifier: "Profile_noanim", sender: self)
+        }
+    }
+    
+    func loginButton(_ loginButton: FBSDKLoginButton!, didCompleteWith result: FBSDKLoginManagerLoginResult!, error: Error!) {
+        guard !result.isCancelled && error == nil else { return }
+        
+        performSegue(withIdentifier: "Profile", sender: nil)
+    }
+    
+    func loginButtonDidLogOut(_ loginButton: FBSDKLoginButton!) {
+        
+    }
+    
 }
 
